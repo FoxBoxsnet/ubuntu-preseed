@@ -4,7 +4,7 @@ sudo: required
 before_install:
   - sudo apt-get -y install syslinux mtools mbr genisoimage dvd+rw-tools
 
-make_iso:
+script:
   - mkdir -p ./dest
   - cd ./dest
   - curl -O http://ftp.iij.ad.jp/pub/linux/ubuntu/releases/16.04.2/ubuntu-16.04.2-server-amd64.iso
