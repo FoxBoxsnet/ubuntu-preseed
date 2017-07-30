@@ -1,0 +1,16 @@
+dist: trusty
+sudo: required
+
+before_install:
+  - sudo apt-get -y install syslinux mtools mbr genisoimage dvd+rw-tools
+
+make_iso:
+  - mkdir -p ./dest
+  - cd ./dest
+  - curl -O http://ftp.iij.ad.jp/pub/linux/ubuntu/releases/16.04.2/ubuntu-16.04.2-server-amd64.iso
+  - mkdir -p {dvd,dvdr}
+  - sudo mount -t iso9660 ubuntu-16.04.2-server-amd64.iso ./dvd
+  - find ./dvd ! -type l | cpio -pdum ./dvdr/
+  - curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/isolinux.cfg -o ./dvdr/isolinux/isolinux.cfg
+  - curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/preseed.seed -o ./dvdr/preseed/preseed.seed
+  - genisoimage -N -J -R -D -V "PRESEED" -o ubuntu-16.04.2-server-amd64-preseed.iso -b ./dvdr/isolinux/isolinux.bin -c ./dvdr/isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table ./dvdr
