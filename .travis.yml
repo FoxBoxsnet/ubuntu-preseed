@@ -16,3 +16,11 @@ script:
   - sudo curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/isolinux.cfg -o ./dvdr/isolinux/isolinux.cfg
   - sudo curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/preseed.seed -o ./dvdr/preseed/preseed.seed
   - sudo genisoimage -N -J -R -D -V "PRESEED" -o ubuntu-16.04.2-server-amd64-preseed.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table ./dvdr
+
+deploy:
+  provider: releases
+  api_key: "${GITHUB_OAUTH_TOKEN}"
+  file: "/home/travis/build/FoxBoxsnet/ubuntu-preseed/dest/ubuntu-16.04.2-server-amd64-preseed.iso"
+  skip_cleanup: true
+  on:
+    tags: true
