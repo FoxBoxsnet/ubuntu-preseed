@@ -13,7 +13,7 @@ script:
   - cd ./dest
   - curl -O "http://ftp.iij.ad.jp/pub/linux/ubuntu/releases/${UBUNTU_VERSION}/ubuntu-${UBUNTU_VERSION}-server-amd64.iso"
   - mkdir -p {dvd,dvdr}
-  - sudo mount -t "iso9660 ubuntu-${UBUNTU_VERSION}-server-amd64.iso" ./dvd
+  - sudo mount -t iso9660 "ubuntu-${UBUNTU_VERSION}-server-amd64.iso" ./dvd
   - cd ./dvd
   - find . ! -type l | cpio -pdum ../dvdr
   - cd ..
