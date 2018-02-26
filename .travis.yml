@@ -1,26 +1,30 @@
 dist: trusty
 sudo: required
 
+env:
+  global:
+    - UBUNTU_VERSION='16.04.3'
+
 before_install:
   - sudo apt-get -y install syslinux mtools mbr genisoimage dvd+rw-tools
 
 script:
   - mkdir -p ./dest
   - cd ./dest
-  - curl -O http://ftp.iij.ad.jp/pub/linux/ubuntu/releases/16.04.2/ubuntu-16.04.2-server-amd64.iso
+  - curl -O "http://ftp.iij.ad.jp/pub/linux/ubuntu/releases/${UBUNTU_VERSION}/ubuntu-${UBUNTU_VERSION}-server-amd64.iso"
   - mkdir -p {dvd,dvdr}
-  - sudo mount -t iso9660 ubuntu-16.04.2-server-amd64.iso ./dvd
+  - sudo mount -t "iso9660 ubuntu-${UBUNTU_VERSION}-server-amd64.iso" ./dvd
   - cd ./dvd
   - find . ! -type l | cpio -pdum ../dvdr
   - cd ..
-  - sudo curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/isolinux.cfg -o ./dvdr/isolinux/isolinux.cfg
-  - sudo curl -sfSL https://gist.githubusercontent.com/FoxBoxsnet/6ee046eede9668227299475d0bdb89ce/raw/preseed.seed -o ./dvdr/preseed/preseed.seed
-  - sudo genisoimage -N -J -R -D -V "PRESEED" -o ubuntu-16.04.2-server-amd64-preseed.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table ./dvdr
+  - sudo cp "./ubuntu/${UBUNTU_VERSION}/isolinux.cfg" ./dvdr/isolinux/isolinux.cfg
+  - sudo cp "./ubuntu/${UBUNTU_VERSION}/preseed.seed" ./dvdr/preseed/preseed.seed
+  - sudo genisoimage -N -J -R -D -V "PRESEED" -o "ubuntu-${UBUNTU_VERSION}-server-amd64-preseed.iso" -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table ./dvdr
 
 deploy:
   provider: releases
   api_key: "${GITHUB_OAUTH_TOKEN}"
-  file: "/home/travis/build/FoxBoxsnet/ubuntu-preseed/dest/ubuntu-16.04.2-server-amd64-preseed.iso"
+  file: "/home/travis/build/FoxBoxsnet/ubuntu-preseed/dest/ubuntu-${UBUNTU_VERSION}-server-amd64-preseed.iso"
   skip_cleanup: true
   on:
     tags: true
